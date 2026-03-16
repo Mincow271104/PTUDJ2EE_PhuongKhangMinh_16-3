@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Manage Products</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body { background: #f8fafc; font-family: 'Inter', sans-serif; }
+        .container { margin-top: 40px; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+        .product-img { width: 50px; height: 50px; object-fit: cover; border-radius: 8px; }
+        .btn-add { background: #10b981; color: white; border: none; }
+        .btn-add:hover { background: #059669; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Product Management</h2>
+            <div th:if="${#authentication.name != 'anonymousUser'}">
+                <span class="mr-3">Hello, <strong th:text="${#authentication.name}">User</strong>!</span>
+                <form th:action="@{/logout}" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-sm btn-outline-danger">Logout</button>
+                </form>
+            </div>
+        </div>
+        <a sec:authorize="hasRole('ADMIN')" th:href="@{/products/add}" class="btn btn-add mb-3">Add New Product</a>
+        <a th:href="@{/categories}" class="btn btn-secondary mb-3">Manage Categories</a>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Category</th>
+                    <th sec:authorize="hasRole('ADMIN')">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="prod : ${products}">
+                    <td><img th:src="${prod.image}" class="product-img" alt="Product Image" th:if="${prod.image != null && !prod.image.isEmpty()}"/></td>
+                    <td th:text="${prod.name}"></td>
+                    <td th:text="${#numbers.formatDecimal(prod.price, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
+                    <td th:text="${prod.category != null ? prod.category.name : 'N/A'}"></td>
+                    <td sec:authorize="hasRole('ADMIN')">
+                        <a th:href="@{/products/edit/{id}(id=${prod.id})}" class="btn btn-sm btn-info">Edit</a>
+                        <a th:href="@{/products/delete/{id}(id=${prod.id})}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

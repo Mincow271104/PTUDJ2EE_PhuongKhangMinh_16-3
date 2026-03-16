@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Manage Categories</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body { background: #f4f7f6; font-family: 'Inter', sans-serif; }
+        .container { margin-top: 50px; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; }
+        .table thead { background: #f8f9fa; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Category Management</h2>
+            <div th:if="${#authentication.name != 'anonymousUser'}">
+                <span class="mr-3">Hello, <strong th:text="${#authentication.name}">User</strong>!</span>
+                <form th:action="@{/logout}" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-sm btn-outline-danger">Logout</button>
+                </form>
+            </div>
+        </div>
+        <a sec:authorize="hasRole('ADMIN')" th:href="@{/categories/add}" class="btn btn-primary mb-3">Add New Category</a>
+        <a th:href="@{/products}" class="btn btn-secondary mb-3">View Products</a>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th sec:authorize="hasRole('ADMIN')">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="cat : ${categories}">
+                    <td th:text="${cat.id}"></td>
+                    <td th:text="${cat.name}"></td>
+                    <td sec:authorize="hasRole('ADMIN')">
+                        <a th:href="@{/categories/edit/{id}(id=${cat.id})}" class="btn btn-sm btn-info">Edit</a>
+                        <a th:href="@{/categories/delete/{id}(id=${cat.id})}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
