@@ -9,4 +9,9 @@ public class IndexController {
     public String index() {
         return "redirect:/products";
     }
+
+    @GetMapping("/403")
+    public String accessDenied() {
+        return "403";
+    }
 }

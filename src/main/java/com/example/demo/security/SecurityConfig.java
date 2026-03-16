@@ -36,6 +36,9 @@ public class SecurityConfig {
                 .logoutSuccessUrl("/login?logout")
                 .permitAll()
             )
+            .exceptionHandling(exception -> exception
+                .accessDeniedPage("/403")
+            )
             // if needed later we can define specific roles using hasRole("ADMIN")
             // .requestMatchers("/admin/**").hasRole("ADMIN")
             .userDetailsService(userDetailsService);
